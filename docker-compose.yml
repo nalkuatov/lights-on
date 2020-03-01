@@ -1,0 +1,21 @@
+version: '3.1'
+
+services:
+
+  adminer:
+    image: adminer
+    restart: always
+    ports: 
+      - 8686:8080
+
+  db:
+    image: postgres
+    restart: always
+    environment: 
+        POSTGRES_USER: user
+        POSTGRES_PASSWORD: password
+        POSTGRES_DB: ice-age-squirrel
+    ports:
+      - 5432:5432
+    volumes:
+      - ./persistence/schema-migrations/:/docker-entrypoint-initdb.d/

@@ -1,0 +1,47 @@
+name:                web
+version:             0.1.0.0
+-- synopsis:
+-- description:
+homepage:            https://github.com/nalkuatov/web#readme
+license:             BSD3
+license-file:        LICENSE
+author:              Nurlan Alkuatov
+maintainer:          nalkuatov@gmail.com
+copyright:           2020 Nurlan Alkuatov
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+library
+  hs-source-dirs:      src
+  exposed-modules:     Data.Score
+  other-modules:       Lib
+                     , Web.Routes
+  build-depends:       base >= 4.7 && < 5
+                     , aeson
+                     , hspec
+                     , mtl
+                     , transformers
+                     , bytestring
+                     , scotty
+                     , text
+                     , data-default-class
+                     , persistence
+  default-language:    Haskell2010
+
+test-suite web-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      test
+  main-is:             Spec.hs
+  other-modules:       Data.ScoreSpec
+  ghc-options:         -threaded -rtsopts -with-rtsopts=-N
+  build-depends:       hspec
+                     , base >= 4.7 && < 5
+                     , web
+                     , aeson
+  default-language:    Haskell2010
+
+source-repository head
+  type:     git
+  location: https://github.com/nalkuatov/web

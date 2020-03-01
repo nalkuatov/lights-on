@@ -1,0 +1,8 @@
+*.hi
+*.o
+tarballs/
+.hsenv/
+.stack-work/
+*~
+*#
+stack.yaml.lock
