@@ -1,29 +1,22 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Persistence.Session 
+module Persistence.Session
   ( S.run
-  , S.CommandError(..)
-  , S.QueryError(..)
+  , S.Session
   , connection
-  , findScores
-  )
-  where
+  , byUsername
+  ) where
 
-import qualified Hasql.Session as S
-import qualified Persistence.Statement as Statement
-import Data.Text
 import Data.Int
-
+import Data.Text
 import Hasql.Connection
-import Data.Either
+import qualified Hasql.Session as S
+import Persistence.Statement (findByUsername)
 
-findScores :: Text -> S.Session Int32
-findScores username = 
-  S.statement username $ Statement.findByUsername
+byUsername :: Text -> S.Session [(Int32, Text, Int32, Int32)]
+byUsername username = S.statement formatted findByUsername
+  where
+    formatted = "%" <> username <> "%"
 
-connection = acquire 
-           $ settings "localhost" 
-                      5432 
-                      "user" 
-                      "password" 
-                      "ice-age-squirrel"
+connection =
+  acquire $ settings "localhost" 5432 "user" "password" "ice-age-squirrel"

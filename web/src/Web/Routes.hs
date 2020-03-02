@@ -1,22 +1,23 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Web.Routes 
+module Web.Routes
   ( routes
-  )
-  where
+  ) where
 
-import Web.Scotty
-import Data.Text.Lazy
+import Control.Monad.Trans (lift)
+import Data.Score
+import Data.Text.Lazy (Text)
+import qualified Persistence.Session as S
+import Web.Scotty.Trans (ScottyT, get, json, param)
 
-routes :: ScottyM ()
+routes :: ScottyT Text S.Session ()
 routes = do
-
-  get "/" $
-    text $ "root"
-  
-  get "/scores" $
-    text $ "scores"
-
-  get "/scores/:id" $ do
-    scoreId <- param "id"
-    json $ "score's id is " ++ show (scoreId :: Int)
+  let converted (_, username, score, game_level) =
+        Score
+          username
+          (toGameLevel $ fromIntegral game_level)
+          (fromIntegral score)
+  get "/scores" $ do
+    username <- param "username"
+    result <- lift $ S.byUsername username
+    json $ converted <$> result
