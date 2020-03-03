@@ -2,10 +2,29 @@
   "name": "lights-on",
   "version": "1.0.0",
   "description": "Simple web app built with purescript & halogen",
-  "main": "index.js",
+
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "spago install",
+    "compile": "spago build",
+    "test": "spago test",
+
+    "reset": "run-p reset:cache reset:spago",
+    "reset:cache": "rm -rf .cache",
+    "reset:spago": "rm -rf .spago",
+
+    "clean": "run-p clean:dist",
+    "clean:output": "rm -rf output/*",
+    "clean:dist": "rm -rf dist/*",
+
+    "repl:node": "spago repl",
+    "repl:browser": "spago repl -- --port 3200",
+
+    "start": "parcel app.html --no-autoinstall",
+    "build": "parcel build app.html"
   },
-  "author": "Nurlan Alkuatov",
-  "license": "ISC"
+
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "parcel-bundler": "^1.12.4"
+  }
 }

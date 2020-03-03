@@ -9,3 +9,5 @@
 /.psa*
 /.spago
 /.vscode/
+/.cache/
+/dist/
