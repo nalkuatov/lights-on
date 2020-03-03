@@ -18,8 +18,9 @@ routes = do
 
   middleware logStdoutDev
 
-  let converted (_, username, score, game_level) =
+  let converted (id, username, score, game_level) =
         Score
+          (fromIntegral id)
           username
           (toGameLevel $ fromIntegral game_level)
           (fromIntegral score)

@@ -22,7 +22,8 @@ data GameLevel
 
 data Score =
   Score
-    { username :: Text
+    { id :: Int
+    , username :: Text
     , level :: GameLevel
     , timeSpent :: Int
     }
@@ -38,9 +39,13 @@ instance FromJSON GameLevel where
 
 instance FromJSON Score where
   parseJSON (Object score) =
-    Score <$> score .: "username" <*> score .: "level" <*> score .: "time-spent"
+    Score <$> 
+      score .: "id" <*> 
+      score .: "username" <*> 
+      score .: "level" <*>
+      score .: "time-spent"
   parseJSON _ = fail "invalid score"
 
 instance ToJSON Score where
-  toJSON (Score username level time) =
-    object ["username" .= username, "level" .= show level, "time-spent" .= time]
+  toJSON (Score id username level time) =
+    object ["id" .= id, "username" .= username, "level" .= show level, "time-spent" .= time]
