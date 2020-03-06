@@ -4,7 +4,9 @@ module Web.Routes
   ( routes
   ) where
 
+import Control.Monad (when)
 import Control.Monad.Trans (lift)
+import Data.Maybe (isNothing)
 import Data.Score
 import Data.Text (empty)
 import Data.Text.Lazy (Text)
@@ -33,7 +35,6 @@ routes = do
   get "/scores/:id" $ do
     scoreId <- param "id"
     result <- lift $ S.byId scoreId
-    case result of 
-      Nothing -> status status404 
-      Just _ -> return ()
+    when (isNothing result) $ 
+      status status404
     json $ converted <$> result
