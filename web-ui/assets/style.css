@@ -1,0 +1,19 @@
+table {
+  border-collapse: separate;
+  border-spacing: .1em .1em;
+  margin: 50px auto;
+}
+
+table td {
+  width:  40px;
+  height: 40px;
+  background-color: black;
+}
+
+td.off {
+  background-color: black;
+}
+
+td.on {
+  background-color: #ffd868;
+}
