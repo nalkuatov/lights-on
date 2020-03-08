@@ -3,19 +3,19 @@ module Lightson.Data.Game
   , Size
   , Level
   , levelOne
-  , levelTwo
-  , levelThree
   , nextLevel
+  , _size
+  , isOn
+  , switchN
   )
 
   where
 
 import Data.Array ((..))
-import Data.Map (Map, fromFoldable)
-import Data.Maybe (Maybe(..))
+import Data.Map (Map, fromFoldable, update, lookup)
+import Data.Maybe (Maybe(..), maybe)
 import Data.Tuple (Tuple(..))
-import Data.Newtype
-import Prelude ((+), ($), (<$>), (<*>), (>=), otherwise)
+import Prelude
 
 type Size = Int
 type Level = Int
@@ -26,22 +26,50 @@ newtype Game =
        , map :: Map (Tuple Int Int) Boolean
        }
 
-derive instance newTypeGame :: Newtype Game _
+_size :: Game -> Size
+_size (Game { size, level: _, map: _ }) = size
+
+_map :: Game -> Map (Tuple Int Int) Boolean
+_map (Game game) = game.map
 
 nextLevel :: Game -> Maybe Game
 nextLevel (Game { size, level, map })
   | level >= 3 = Nothing
-  | otherwise  = Just $ generate (level + 2) level
+  | otherwise  = Just $ generate (size + 1) (level + 1)
 
 levelOne :: Game 
 levelOne = generate 3 1
 
-levelTwo :: Game 
-levelTwo = generate 4 2
+isOn :: Tuple Int Int -> Game -> Boolean
+isOn key =
+  maybe false identity
+    <<< lookup key
+    <<< _map
 
-levelThree :: Game 
-levelThree = generate 5 3
-  
+-- | Turn on / off the lights at the given coordinates
+-- | and all of its neighbours
+switchN :: Tuple Int Int -> Game -> Maybe Game
+switchN (Tuple x y) game = 
+  switch (Tuple x y) game 
+  >>= switch (Tuple (x + 1) y)
+  >>= switch (Tuple (x - 1) y)
+  >>= switch (Tuple x (y - 1))
+  >>= switch (Tuple x (y + 1))
+
+
+-- | Turn on / off the lights at the given coordinates
+-- | Leftmost coordinate starts with 1 (not 0)
+switch :: Tuple Int Int -> Game -> Maybe Game
+switch key (Game game) =
+  let 
+    turnOn'or'Off = (\bool -> Just $ not bool)
+  in 
+    Just $ Game 
+      { size: game.size
+      , level: game.level
+      , map: update turnOn'or'Off key game.map
+      }
+
 generate 
   :: Size 
   -> Level

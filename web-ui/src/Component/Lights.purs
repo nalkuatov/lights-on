@@ -1,56 +1,58 @@
 module Lightson.Component.Lights 
-  ( lights 
-  , component
+  ( component
   )
   where
 
 import Lightson.Data.Game
-import Lightson.Component.HTML.Util (css)
 
 import Data.Array ((..))
+import Data.Maybe (Maybe(..))
+import Data.Tuple (Tuple(..))
 import Halogen as H
 import Halogen.HTML as HH
-import Data.Maybe (Maybe(..))
+import Halogen.HTML.Events as HE
+import Lightson.Component.HTML.Util (css)
 import Prelude (Void, Unit, (<$>), ($), (>>=))
-import Data.Newtype (unwrap)
 
 type State = 
   { game :: Maybe Game
   }
+
+-- | An action to turn on the lights
+data Action = Switch (Tuple Int Int)
 
 component
   :: forall q i m
   .  H.Component HH.HTML q i Void m
 component = 
   H.mkComponent 
-    { initialState: (\_ -> { game: Just levelThree })
+    { initialState: (\_ -> { game: Just levelOne })
     , render
     , eval: H.mkEval $ H.defaultEval { handleAction = handleAction }
     }
 
   where
     render 
-      :: forall a
-      . State 
-      -> H.ComponentHTML a () m
-    render { game } = lights $ (\g -> (unwrap g).size) <$> game
+      :: State 
+      -> H.ComponentHTML Action () m
+    render state = lights state.game
 
     handleAction
-      :: forall action
-      .  action
-      -> H.HalogenM State action () Void m Unit
-    handleAction _ = 
-      H.modify_ (\{ game } -> { game: game >>= nextLevel})
+      :: Action
+      -> H.HalogenM State Action () Void m Unit
+    handleAction (Switch coordinates) = 
+      H.modify_ 
+        (\state -> { game: state.game >>= switchN coordinates })
 
 lights 
-  :: forall action props
-  .  Maybe Size
-  -> HH.HTML action props
-lights sizeMaybe = 
+  :: forall props
+  .  Maybe Game
+  -> HH.HTML props Action
+lights gameMaybe = 
 
-  case sizeMaybe of 
+  case gameMaybe of 
     Nothing -> HH.div [] []
-    Just size -> 
+    Just game -> 
       HH.div [ css "container" ] 
         [ HH.div [ css "columns is-centered"] 
             [ HH.div [ css "column is-half"] 
@@ -62,7 +64,17 @@ lights sizeMaybe =
         table = 
           HH.table_
             [ HH.tbody_ $
-                (\_ -> trs size) <$> (1 .. size)
-            ]
-        trs y = 
-          HH.tr_ $ (\_ -> HH.td [ css "off" ] []) <$> (1 .. y)
+                (\rowNo -> trs rowNo) <$> (1 .. _size game)            ]
+
+        trs rowNumber = 
+          HH.tr_ $ (\colNumber -> 
+                     HH.td [ css $ cellIsOn rowNumber colNumber 
+                           , HE.onClick $ (\_ -> Just (Switch $ Tuple rowNumber colNumber))
+                           ] 
+                      []) 
+                 <$> (1 .. _size game)
+
+        cellIsOn row col = 
+          if isOn (Tuple row col) game
+            then "on"
+            else "off"
