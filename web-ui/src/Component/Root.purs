@@ -37,10 +37,21 @@ component =
     render _ = 
       HH.section [ css "section" ]
         [ HH.div [ css "container" ]
-            [ HH.div [ css "columns is-centered" ] 
-                [ HH.div [ css "column is-7" ] 
+            [ HH.div [ css "columns is-centered"] 
+                [ HH.div [ css "column is-7"] 
+                    [ HH.h3 [ css "title is-3 has-text-centered" ] 
+                        [ HH.text "Turn on the lights!"] 
+                    ]
+                ]
+            , HH.br_
+            , HH.br_
+            , HH.br_
+            , HH.div [ css "columns is-centered is-multiline" ] 
+                [ HH.br_
+                , HH.div [ css "column is-7 box" ] 
                     [ HH.slot (SProxy :: _ "game") unit Lights.component unit absurd
                     ]
+                , HH.hr_
                 ]
             , HH.div [ css "columns is-centered" ]
                 [ HH.div [css "column is-7" ] 

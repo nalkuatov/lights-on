@@ -7,12 +7,14 @@ module Lightson.Data.Game
   , _size
   , isOn
   , switchN
+  , isWin
   )
 
   where
 
 import Data.Array ((..))
-import Data.Map (Map, fromFoldable, update, lookup)
+import Data.List (all)
+import Data.Map (Map, fromFoldable, update, lookup, values)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Tuple (Tuple(..))
 import Prelude
@@ -46,6 +48,10 @@ isOn key =
     <<< lookup key
     <<< _map
 
+-- | Check if all of the lights (cells) are turned on.
+isWin :: Game -> Boolean
+isWin = all ((==) true) <<< values <<< _map
+
 -- | Turn on / off the lights at the given coordinates
 -- | and all of its neighbours
 switchN :: Tuple Int Int -> Game -> Maybe Game
@@ -57,7 +63,7 @@ switchN (Tuple x y) game =
   >>= switch (Tuple x (y + 1))
 
 
--- | Turn on / off the lights at the given coordinates
+-- | Turn on / off the lights at the given coordinates.
 -- | Leftmost coordinate starts with 1 (not 0)
 switch :: Tuple Int Int -> Game -> Maybe Game
 switch key (Game game) =

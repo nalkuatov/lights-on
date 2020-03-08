@@ -12,7 +12,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Lightson.Component.HTML.Util (css)
-import Prelude (Void, Unit, (<$>), ($), (>>=))
+import Prelude (Void, Unit, (<$>), ($), (>>=), (<>))
 
 type State = 
   { game :: Maybe Game
@@ -20,6 +20,7 @@ type State =
 
 -- | An action to turn on the lights
 data Action = Switch (Tuple Int Int)
+            | NextLevel
 
 component
   :: forall q i m
@@ -40,9 +41,12 @@ component =
     handleAction
       :: Action
       -> H.HalogenM State Action () Void m Unit
-    handleAction (Switch coordinates) = 
-      H.modify_ 
-        (\state -> { game: state.game >>= switchN coordinates })
+    handleAction action = case action of
+      Switch coordinates ->
+        H.modify_ 
+          (\state -> { game: state.game >>= switchN coordinates })
+      NextLevel -> 
+        H.modify_ (\state -> { game: state.game >>= nextLevel })
 
 lights 
   :: forall props
@@ -55,12 +59,18 @@ lights gameMaybe =
     Just game -> 
       HH.div [ css "container" ] 
         [ HH.div [ css "columns is-centered"] 
-            [ HH.div [ css "column is-half"] 
-                [ table
-                ] 
+            [ HH.div [ css "column is-half"] $
+                [ table 
+                ] <> if isWin game then [ nextButton ] else []
             ]
         ]
       where
+        nextButton = 
+          HH.button 
+            [ css "button is-pulled-right is-success"
+            , HE.onClick (\_ -> Just NextLevel)
+            ] 
+            [ HH.text "Go next" ]
         table = 
           HH.table_
             [ HH.tbody_ $
