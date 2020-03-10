@@ -29,13 +29,13 @@ newtype Game =
        }
 
 _size :: Game -> Size
-_size (Game { size, level: _, map: _ }) = size
+_size (Game { size }) = size
 
 _map :: Game -> Map (Tuple Int Int) Boolean
-_map (Game game) = game.map
+_map (Game { map }) = map
 
 nextLevel :: Game -> Maybe Game
-nextLevel (Game { size, level, map })
+nextLevel (Game { size, level })
   | level >= 3 = Nothing
   | otherwise  = Just $ generate (size + 1) (level + 1)
 
@@ -66,14 +66,14 @@ switchN (Tuple x y) game =
 -- | Turn on / off the lights at the given coordinates.
 -- | Leftmost coordinate starts with 1 (not 0)
 switch :: Tuple Int Int -> Game -> Maybe Game
-switch key (Game game) =
+switch key (Game { size, level, map }) =
   let 
     turnOn'or'Off = (\bool -> Just $ not bool)
   in 
     Just $ Game 
-      { size: game.size
-      , level: game.level
-      , map: update turnOn'or'Off key game.map
+      { size: size
+      , level: level
+      , map: update turnOn'or'Off key map
       }
 
 generate 
