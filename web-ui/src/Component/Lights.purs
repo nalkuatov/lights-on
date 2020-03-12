@@ -74,7 +74,8 @@ lights gameMaybe =
         table = 
           HH.table_
             [ HH.tbody_ $
-                (\rowNo -> trs rowNo) <$> (1 .. _size game)            ]
+                (\rowNo -> trs rowNo) <$> (1 .. _size game)
+            ]
 
         trs rowNumber = 
           HH.tr_ $ (\colNumber -> 
