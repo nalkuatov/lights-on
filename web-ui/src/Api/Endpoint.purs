@@ -16,8 +16,8 @@ import Routing.Duplex.Generic (sum)
 import Routing.Duplex.Generic.Syntax ((/))
 
 data Endpoint
-  = Players { username :: Maybe String }
-  | Player PlayerId
+  = Scores { username :: Maybe String }
+  | Score PlayerId
 
 derive instance genericEndpoint :: Generic Endpoint _
 
@@ -26,8 +26,8 @@ instance showEndpoint :: Show Endpoint
 
 codec :: RouteDuplex' Endpoint
 codec = root $ sum 
-  { "Players": "players" / params { username: optional <<< string }
-  , "Player":  "players" / int segment
+  { "Scores": "scores" / params { username: optional <<< string }
+  , "Score":  "scores" / int segment
   }
 
 print :: Endpoint -> String
