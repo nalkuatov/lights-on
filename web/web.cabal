@@ -29,6 +29,7 @@ library
                      , data-default-class
                      , persistence
                      , wai-extra
+                     , wai-cors
                      , http-types
   default-language:    Haskell2010
 

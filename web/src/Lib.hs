@@ -16,7 +16,7 @@ sample = do
   print result
 
 app :: IO ()
-app = scottyT 3000 runIO routes
+app = scottyT 3001 runIO routes
   where
     runIO :: S.Session a -> IO a
     runIO session = do

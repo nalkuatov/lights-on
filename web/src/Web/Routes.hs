@@ -12,6 +12,7 @@ import Data.Text (empty)
 import Data.Text.Lazy (Text)
 import Network.HTTP.Types
 import Network.Wai.Middleware.RequestLogger
+import Network.Wai.Middleware.Cors
 import qualified Persistence.Session as S
 import Web.Scotty.Trans
 
@@ -19,6 +20,7 @@ routes :: ScottyT Text S.Session ()
 routes = do
 
   middleware logStdoutDev
+  middleware simpleCors
 
   let converted (id, username, score, game_level) =
         Score
