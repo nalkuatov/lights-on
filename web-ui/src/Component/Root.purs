@@ -10,6 +10,7 @@ import Lightson.Component.Ratings as Ratings
 import Lightson.Component.Lights as Lights
 import Lightson.Component.HTML.Util (css)
 import Lightson.Component.Util (OpaqueSlot)
+import Lightson.Capability.Resource.Player (class ManagePlayer)
 import Type.Prelude (SProxy(..))
 import Prelude (($), Void, Unit, unit, absurd)
 
@@ -21,8 +22,9 @@ type ChildSlots =
   )
 
 component 
-  :: forall q i
-  . H.Component HH.HTML q i Void Aff
+  :: forall q i m
+  .  ManagePlayer m
+  => H.Component HH.HTML q i Void m
 component = 
 
   H.mkComponent
@@ -33,7 +35,7 @@ component =
 
   where
 
-    render :: forall a m. State -> HH.ComponentHTML a ChildSlots m
+    render :: forall a. State -> HH.ComponentHTML a ChildSlots m
     render _ = 
       HH.section [ css "section" ]
         [ HH.div [ css "container" ]
@@ -67,5 +69,5 @@ component =
     handleAction 
       :: forall a
       .  a
-      -> H.HalogenM State a ChildSlots Void Aff Unit
+      -> H.HalogenM State a ChildSlots Void m Unit
     handleAction _ = H.modify_ (\_ -> 0)
