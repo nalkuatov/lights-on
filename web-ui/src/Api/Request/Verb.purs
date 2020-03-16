@@ -1,5 +1,5 @@
 module Lightson.Api.Request.Verb 
-  ( Verb
+  ( Verb (..)
   , body
   , method
   )

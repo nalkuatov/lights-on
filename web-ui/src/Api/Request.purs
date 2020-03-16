@@ -1,4 +1,7 @@
 module Lightson.Api.Request 
+  ( defaultRequest
+  , RequestOptions
+  )
   where
 
 import Affjax (Request)
@@ -13,10 +16,15 @@ import Lightson.Api.Request.Verb (Verb)
 import Lightson.Api.Request.Verb as Verb
 import Prelude ((<$>), (<>))
 
+type RequestOptions =  
+  { endpoint :: Endpoint 
+  , verb :: Verb
+  }
+
 type BaseURL = String
 
-mkRequest :: BaseURL -> Verb -> Endpoint -> Request Json
-mkRequest url verb endpoint =
+defaultRequest :: BaseURL -> RequestOptions -> Request Json
+defaultRequest url { verb, endpoint } =
   { method: Left (Verb.method verb)
   , url: url <> Endpoint.print endpoint
   , headers: []

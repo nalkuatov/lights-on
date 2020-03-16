@@ -8,7 +8,7 @@ import Lightson.Data.Player (Player, Username)
 import Prelude ((<<<))
 
 class Monad m <= ManagePlayer m where
-  getPlayers :: Username -> m (Maybe (Array Player))
+  getPlayers :: Maybe Username -> m (Maybe (Array Player))
 
 instance managePlayerHalogenM 
   :: ManagePlayer m 
