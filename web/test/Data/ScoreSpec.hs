@@ -12,7 +12,7 @@ spec :: Spec
 spec =
   describe "json convertions" $ do
     let repr =
-          "{\"username\":\"username\",\"time-spent\":130,\"id\":1,\"level\":\"Easy\"}"
+          "{\"score\":130,\"username\":\"username\",\"id\":1,\"level\":\"Easy\"}"
     it "should convert to json" $
       encode (Score 1 "username" Easy 130) `shouldBe` repr
     it "should parse json" $

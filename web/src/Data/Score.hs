@@ -43,9 +43,9 @@ instance FromJSON Score where
       score .: "id" <*> 
       score .: "username" <*> 
       score .: "level" <*>
-      score .: "time-spent"
+      score .: "score"
   parseJSON _ = fail "invalid score"
 
 instance ToJSON Score where
   toJSON (Score id username level time) =
-    object ["id" .= id, "username" .= username, "level" .= show level, "time-spent" .= time]
+    object ["id" .= id, "username" .= username, "level" .= show level, "score" .= time]
