@@ -5,6 +5,7 @@ module Web.Routes
   ) where
 
 import Control.Monad (when)
+import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans (lift)
 import Data.Maybe (isNothing)
 import Data.Score
@@ -29,9 +30,14 @@ routes = do
           (toGameLevel $ fromIntegral game_level)
           (fromIntegral score)
 
+      toInt "easy" = 1
+      toInt "medium" = 2
+      toInt "hard" = 3
+
   get "/scores" $ do
-    username <- param "username" `rescue` (\_ -> return empty)
-    result <- lift $ S.byUsername username
+    level <- param "level" `rescue` (\_ -> return empty)
+    liftIO $ print $ toInt level
+    result <- lift $ S.byLevel $ toInt level
     json $ converted <$> result
 
   get "/scores/:id" $ do
