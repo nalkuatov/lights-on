@@ -30,9 +30,9 @@ runAppM :: forall a. String -> AppM a -> Aff a
 runAppM value (AppM app) = runReaderT app value
 
 instance managePlayerAppM :: ManagePlayer AppM where
-  getPlayers username = 
+  getPlayers params = 
     mkRequest 
-      { endpoint: Scores { username }
+      { endpoint: Scores params
       , verb: Get 
       }
       >>= decode

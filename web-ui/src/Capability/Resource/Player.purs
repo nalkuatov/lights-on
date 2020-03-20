@@ -4,11 +4,12 @@ module Lightson.Capability.Resource.Player
 import Control.Monad (class Monad)
 import Data.Maybe (Maybe)
 import Halogen (HalogenM, lift)
-import Lightson.Data.Player (Player, Username)
+import Lightson.Data.Player (Player)
+import Lightson.Api.Endpoint
 import Prelude ((<<<))
 
 class Monad m <= ManagePlayer m where
-  getPlayers :: Maybe Username -> m (Maybe (Array Player))
+  getPlayers :: ScoreParams -> m (Maybe (Array Player))
 
 instance managePlayerHalogenM 
   :: ManagePlayer m 

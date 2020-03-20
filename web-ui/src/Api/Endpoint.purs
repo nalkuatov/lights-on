@@ -1,5 +1,6 @@
 module Lightson.Api.Endpoint 
   ( Endpoint(..)
+  , ScoreParams
   , print
   , codec
   )
@@ -16,7 +17,7 @@ import Routing.Duplex.Generic (sum)
 import Routing.Duplex.Generic.Syntax ((/))
 
 data Endpoint
-  = Scores { username :: Maybe String }
+  = Scores ScoreParams
   | Score PlayerId
 
 derive instance genericEndpoint :: Generic Endpoint _
@@ -24,9 +25,17 @@ derive instance genericEndpoint :: Generic Endpoint _
 instance showEndpoint :: Show Endpoint
   where show = genericShow
 
+type ScoreParams = 
+  { username :: Maybe String
+  , level :: Maybe String
+  }
+
 codec :: RouteDuplex' Endpoint
 codec = root $ sum 
-  { "Scores": "scores" / params { username: optional <<< string }
+  { "Scores": "scores" / params 
+      { username: optional <<< string
+      , level: optional <<< string 
+      }
   , "Score":  "scores" / int segment
   }
 
