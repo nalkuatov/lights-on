@@ -5,14 +5,16 @@ module Lightson.Component.Ratings
 
 import Lightson.Data.Player
 
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), fromMaybe)
 import Halogen as H
 import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
+import Lightson.Api.Endpoint (ScoreParams)
 import Lightson.Capability.Resource.Player (class ManagePlayer, getPlayers)
 import Lightson.Component.HTML.Util (css)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
-import Prelude (Void, bind, ($), (<>), (<$>), void)
+import Prelude (Void, bind, ($), (<>), (<$>), void, (==))
 
 type State = 
   { searchLevel :: String
@@ -21,7 +23,7 @@ type State =
 
 data Action
   = Initialize
-  | LoadPlayers
+  | LoadPlayers ScoreParams
 
 component 
   :: forall q i m
@@ -46,24 +48,37 @@ component =
     handleAction =
       case _ of 
         Initialize -> do
-          void $ H.fork $ handleAction LoadPlayers 
+          void $ H.fork $ handleAction $ 
+            LoadPlayers { username: Nothing, level: Just "easy" }
 
-        LoadPlayers -> do
+        LoadPlayers { username, level } -> do
           { searchLevel } <- H.get
-          players <- getPlayers Nothing
-          H.modify_ _ { players = RemoteData.fromMaybe players}
+          players <- getPlayers { username: Nothing, level }
+          H.modify_ _ 
+            { players = RemoteData.fromMaybe players
+            , searchLevel = fromMaybe "easy" level
+            }
 
 panel 
   :: forall props
   . State
   -> HH.HTML props Action
-panel { players } = 
+panel { searchLevel, players } = 
   HH.nav [ css "panel" ] $
     [ HH.p [ css "panel-heading" ] [ HH.text "Best results"]
     , HH.p [ css "panel-tabs" ] 
-        [ HH.a [ css "is-active" ] [ HH.text "Easy level"]
-        , HH.a_ [ HH.text "Medium level" ]
-        , HH.a_ [ HH.text "Hard level" ]
+        [ HH.a [ css $ if searchLevel == "easy" then "is-active" else "" 
+               , HE.onClick (\_ -> Just $ LoadPlayers { username: Nothing, level: Just "easy" })
+               ]
+          [ HH.text "Easy level"]
+        , HH.a [ css $ if searchLevel == "medium" then "is-active" else "" 
+               , HE.onClick (\_ -> Just $ LoadPlayers { username: Nothing, level: Just "medium" })
+               ]
+          [ HH.text "Medium level" ]
+        , HH.a [ css $ if searchLevel == "hard" then "is-active" else ""
+               , HE.onClick (\_ -> Just $ LoadPlayers { username: Nothing, level: Just "hard" })
+               ]
+          [ HH.text "Hard level" ]
         ]
     ] <> renderPlayers
 
@@ -85,7 +100,14 @@ panel { players } =
               [ HH.text "Loading" ]
             ]
 
+          Success [] -> [ renderEmpty ]
+
           Success items -> renderPlayer <$> items
+
+      renderEmpty  = 
+        HH.a [ css "panel-block" ] 
+          [ HH.text "No one has solved this lvl yet"
+          ]
 
       renderPlayer { username } = 
         HH.a [ css "panel-block" ] 
@@ -96,4 +118,3 @@ panel { players } =
           -- , HH.span [ css "tag is-info" ]
           --     [ HH.text "123 seconds" ]
           ]
-
