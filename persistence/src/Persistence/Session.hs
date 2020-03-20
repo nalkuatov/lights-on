@@ -5,6 +5,7 @@ module Persistence.Session
   , S.Session
   , connection
   , byUsername
+  , byLevel
   , byId
   ) where
 
@@ -14,6 +15,9 @@ import Hasql.Connection
 import qualified Hasql.Session as S
 import Internal.Types
 import Persistence.Statement
+
+byLevel :: Int32 -> S.Session [(ScoreId, Username, Score, Level)]
+byLevel level = S.statement level findByLevel
 
 byUsername :: Text -> S.Session [(ScoreId, Username, Score, Level)]
 byUsername username = S.statement formatted findByUsername

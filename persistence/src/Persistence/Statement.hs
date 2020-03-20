@@ -3,6 +3,7 @@
 module Persistence.Statement
   ( findByUsername
   , findById
+  , findByLevel
   ) where
 
 import Data.Int
@@ -12,6 +13,19 @@ import Internal.Types
 import qualified Hasql.Decoders as D
 import qualified Hasql.Encoders as E
 import Hasql.Statement (Statement(..))
+
+findByLevel :: Statement Int32 [(ScoreId, Username, Score, Level)]
+findByLevel =
+  let sql = 
+        "select id, username, score, game_level from scores where game_level = $1"
+      encoders = E.param (E.nonNullable E.int4)
+      decoders =
+        D.rowList $
+        (,,,) <$> D.column (D.nonNullable D.int4) <*>
+        D.column (D.nonNullable D.text) <*>
+        D.column (D.nonNullable D.int4) <*>
+        D.column (D.nonNullable D.int4)
+   in Statement sql encoders decoders True
 
 findByUsername :: Statement Text [(ScoreId, Username, Score, Level)]
 findByUsername =
