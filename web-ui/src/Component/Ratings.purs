@@ -90,7 +90,7 @@ panel { searchLevel, players } =
               [ HH.text $ "Not loaded" ]
             ]
 
-          Failure e->
+          Failure e ->
             [ HH.a [ css "panel-block" ] 
               [ HH.text "Failed to connect to the server" ]
             ]

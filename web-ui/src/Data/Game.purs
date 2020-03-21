@@ -5,6 +5,7 @@ module Lightson.Data.Game
   , levelOne
   , nextLevel
   , _size
+  , _level
   , isOn
   , switchN
   , isWin
@@ -27,6 +28,9 @@ newtype Game =
        , level :: Level
        , map :: Map (Tuple Int Int) Boolean
        }
+
+_level :: Game -> Level
+_level (Game { level }) = level
 
 _size :: Game -> Size
 _size (Game { size }) = size

@@ -11,8 +11,9 @@ import Data.Tuple (Tuple(..))
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties (placeholder)
 import Lightson.Component.HTML.Util (css)
-import Prelude (Void, Unit, (<$>), ($), (>>=), (<>))
+import Prelude (Void, Unit, (<$>), ($), (>>=), (<>), (<<<))
 
 type State = 
   { game :: Maybe Game
@@ -59,18 +60,49 @@ lights gameMaybe =
     Just game -> 
       HH.div [ css "container" ] 
         [ HH.div [ css "columns is-centered"] 
-            [ HH.div [ css "column is-half"] $
-                [ table 
+            [ HH.div [ css "column is-half has-text-centered"] $
+                [ HH.h4 [ css "title is-4"] 
+                    [ HH.text $ (lvlShow <<< _level) game <> " level"
+                    ]
+                , HH.hr_
+                , table 
                 ] <> if isWin game then [ nextButton ] else []
             ]
         ]
       where
+
+        lvlShow 1 = "Easy"
+        lvlShow 2 = "Medium"
+        lvlShow 3 = "Hard"
+        lvlShow _ = "Unknown"
+
         nextButton = 
-          HH.button 
-            [ css "button is-pulled-right is-success"
-            , HE.onClick (\_ -> Just NextLevel)
-            ] 
-            [ HH.text "Go next" ]
+          HH.div_ 
+            [ HH.div [ css "has-text-centered" ]
+                [ HH.h5 [ css "title is-5"] 
+                    [ HH.text $ "Well done! "
+                    ]
+                , HH.hr_
+                ]
+            , HH.div [ css "field has-addons"] 
+              [ HH.p [ css "control"] 
+                  [ HH.input [ css "input is-info", placeholder "type your name"]
+                  ]
+              , HH.p [ css "control"] 
+                  [ HH.button [ css "button is-success", HE.onClick (\_ -> Just NextLevel) ] 
+                      [ HH.text "Go next" ]
+                  ]
+              ]
+            ]
+          -- HH.div [ css "level" ] 
+          --   [ HH.div [ css "level-item" ] 
+          --       [ HH.button 
+          --           [ css "button is-pulled-right is-success"
+          --           , HE.onClick (\_ -> Just NextLevel)
+          --           ] 
+          --           [ HH.text "Go next" ]
+          --       ]
+          --   ]
         table = 
           HH.table_
             [ HH.tbody_ $
