@@ -13,17 +13,16 @@ import Data.Text
 import Internal.Types
 import qualified Hasql.Decoders as D
 import qualified Hasql.Encoders as E
-import Contravariant.Extras.Contrazip (contrazip4)
+import Contravariant.Extras.Contrazip (contrazip3)
 import Hasql.Statement (Statement(..))
 
-insert :: Statement (ScoreId, Username, Score, Level) Int32
+insert :: Statement (Username, Score, Level) Int32
 insert = 
   let sql = 
-        "insert into scores (id, username, score, game_level) \ 
-         \ values ($1, $2, $3, $4) returning id"
+        "insert into scores (username, score, game_level) \ 
+         \ values ($1, $2, $3) returning id"
       encoders = 
-        contrazip4 
-          (E.param (E.nonNullable E.int4))
+        contrazip3 
           (E.param (E.nonNullable E.text))
           (E.param (E.nonNullable E.int4))
           (E.param (E.nonNullable E.int4))

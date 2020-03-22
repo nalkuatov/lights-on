@@ -46,7 +46,7 @@ instance FromJSON GameLevel where
 instance FromJSON Score where
   parseJSON (Object score) =
     Score <$> 
-      score .: "id" <*> 
+      score .:? "id" .!= (-1) <*> 
       score .: "username" <*> 
       score .: "level" <*>
       score .: "score"

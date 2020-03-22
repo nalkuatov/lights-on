@@ -17,7 +17,7 @@ import qualified Hasql.Session as S
 import Internal.Types
 import qualified Persistence.Statement as Statement
 
-insert :: (ScoreId, Username, Score, Level) -> S.Session Int32
+insert :: (Username, Score, Level) -> S.Session Int32
 insert value = S.statement value Statement.insert
 
 byLevel :: Int32 -> S.Session [(ScoreId, Username, Score, Level)]

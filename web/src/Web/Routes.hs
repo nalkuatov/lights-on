@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE LambdaCase #-}
 
 module Web.Routes
   ( routes
@@ -8,7 +7,6 @@ module Web.Routes
 
 import Prelude hiding (id)
 import Control.Monad (when)
-import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans (lift)
 import Data.Maybe (isNothing)
 import Data.Score
@@ -36,7 +34,7 @@ routes = do
           (fromIntegral score)
 
       unwrapped Score { id, username, level, timeSpent } =
-        (fromIntegral id, username, (fromIntegral . toInt) level, fromIntegral timeSpent)
+        (username, fromIntegral timeSpent, (fromIntegral . toInt) level)
 
       lvlToInt "easy" = 1
       lvlToInt "medium" = 2
@@ -50,7 +48,6 @@ routes = do
         status status415
         json ("couldn't decode json to Score" :: String)
       Just value -> do
-        liftIO $ print $ unwrapped value
         result <- lift $ S.insert $ unwrapped value
         json result
 
