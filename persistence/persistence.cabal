@@ -22,6 +22,7 @@ library
                      , text
                      , transformers
                      , hasql
+                     , contravariant-extras
   default-language:    Haskell2010
 
 source-repository head

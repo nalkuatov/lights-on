@@ -4,6 +4,7 @@ module Data.Score
   ( Score(..)
   , GameLevel(..)
   , toGameLevel
+  , toInt
   ) where
 
 import Data.Aeson
@@ -13,6 +14,11 @@ toGameLevel :: Int -> GameLevel
 toGameLevel 1 = Easy
 toGameLevel 2 = Medium
 toGameLevel 3 = Hard
+
+toInt :: GameLevel -> Int
+toInt Easy = 1
+toInt Medium = 2
+toInt Hard = 3
 
 data GameLevel
   = Easy

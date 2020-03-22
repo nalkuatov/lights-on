@@ -4,15 +4,32 @@ module Persistence.Statement
   ( findByUsername
   , findById
   , findByLevel
+  , insert
   ) where
 
 import Data.Int
-import Data.List
+import Data.List hiding (insert)
 import Data.Text
 import Internal.Types
 import qualified Hasql.Decoders as D
 import qualified Hasql.Encoders as E
+import Contravariant.Extras.Contrazip (contrazip4)
 import Hasql.Statement (Statement(..))
+
+insert :: Statement (ScoreId, Username, Score, Level) Int32
+insert = 
+  let sql = 
+        "insert into scores (id, username, score, game_level) \ 
+         \ values ($1, $2, $3, $4) returning id"
+      encoders = 
+        contrazip4 
+          (E.param (E.nonNullable E.int4))
+          (E.param (E.nonNullable E.text))
+          (E.param (E.nonNullable E.int4))
+          (E.param (E.nonNullable E.int4))
+      decoders =
+        D.singleRow $ (D.column . D.nonNullable) D.int4
+  in Statement sql encoders decoders True
 
 findByLevel :: Statement Int32 [(ScoreId, Username, Score, Level)]
 findByLevel =
