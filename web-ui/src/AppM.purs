@@ -6,12 +6,13 @@ module Lightson.AppM
 
 import Prelude
 
-import Lightson.Api.Endpoint (Endpoint(..))
-
 import Control.Monad.Reader (ReaderT, runReaderT)
+import Data.Argonaut.Encode (encodeJson)
+import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
 import Effect.Aff.Class (class MonadAff)
 import Effect.Class (class MonadEffect)
+import Lightson.Api.Endpoint (Endpoint(..))
 import Lightson.Api.Request.Verb (Verb(..))
 import Lightson.Api.Util (decode, mkRequest)
 import Lightson.Capability.Resource.Player (class ManagePlayer)
@@ -30,6 +31,13 @@ runAppM :: forall a. String -> AppM a -> Aff a
 runAppM value (AppM app) = runReaderT app value
 
 instance managePlayerAppM :: ManagePlayer AppM where
+  createPlayer player =
+    mkRequest 
+      { endpoint: Scores { username: Nothing, level: Nothing }
+      , verb: Post $ (Just <<< encodeJson) player
+      } 
+      >>= decode
+
   getPlayers params = 
     mkRequest 
       { endpoint: Scores params
