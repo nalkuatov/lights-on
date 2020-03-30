@@ -1,7 +1,7 @@
 FROM fpco/stack-build:lts-14.27
 USER root
-RUN mkdir -p /opt/covid-project/
+RUN mkdir -p /opt/lightson/
 ARG BINARY_PATH
-WORKDIR /opt/covid-project
-COPY "./.stack-work/dist/x86_64-linux/Cabal-2.4.0.1/build/covid-project-exe" /opt/covid-project
-CMD ["/opt/covid-project/covid-project-exe"]
+WORKDIR /opt/lightson
+COPY "./.stack-work/dist/x86_64-linux/Cabal-2.4.0.1/build/lightson-exe" /opt/lightson
+CMD ["/opt/lightson/lightson-exe"]
