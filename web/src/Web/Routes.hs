@@ -24,7 +24,8 @@ routes :: ScottyT Text S.Session ()
 routes = do
 
   middleware logStdoutDev
-  middleware simpleCors
+  middleware $ cors $ 
+    const $ Just simpleCorsResourcePolicy { corsRequestHeaders = ["Content-Type"]}
 
   let wrapped (id, username, score, game_level) =
         Score
@@ -53,7 +54,10 @@ routes = do
 
   get "/scores" $ do
     level <- param "level" `rescue` (\_ -> return empty)
-    result <- lift $ S.byLevel $ (lvlToInt . toLower) level
+    result <- 
+      if level == empty
+        then lift $ S.byLevel 1
+        else lift $ S.byLevel $ (lvlToInt . toLower) level
     json $ wrapped <$> result
 
   get "/scores/:id" $ do

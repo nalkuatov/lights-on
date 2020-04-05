@@ -14,7 +14,7 @@ import Prelude (($), bind, pure)
 
 mkRequest :: forall m. MonadAff m => RequestOptions -> m (Maybe Json)
 mkRequest opts = do
-  let url = "http://localhost:3001"
+  let url = "http://localhost:3000"
   response <- liftAff $ request $ defaultRequest url opts
   pure $ hush $ rmap _.body response
 

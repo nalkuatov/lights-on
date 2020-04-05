@@ -32,4 +32,4 @@ byId :: Int32 -> S.Session (Maybe (ScoreId, Username, Score, Level))
 byId id = S.statement id Statement.findById
 
 connection =
-  acquire $ settings "localhost" 5432 "user" "password" "ice-age-squirrel"
+  acquire $ settings "db" 5432 "user" "password" "ice-age-squirrel"

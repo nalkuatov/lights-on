@@ -3,7 +3,7 @@ module Lightson.Component.Root
   )
   where
 
-import Effect.Aff (Aff)
+import Effect.Class
 import Halogen as H
 import Halogen.HTML as HH
 import Lightson.Component.Ratings as Ratings
@@ -24,6 +24,7 @@ type ChildSlots =
 component 
   :: forall q i m
   .  ManagePlayer m
+  => MonadEffect m
   => H.Component HH.HTML q i Void m
 component = 
 

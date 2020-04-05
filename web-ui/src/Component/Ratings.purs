@@ -14,7 +14,7 @@ import Lightson.Capability.Resource.Player (class ManagePlayer, getPlayers)
 import Lightson.Component.HTML.Util (css)
 import Network.RemoteData (RemoteData(..))
 import Network.RemoteData as RemoteData
-import Prelude (Void, bind, ($), (<>), (<$>), void, (==))
+import Prelude (Void, bind, ($), (<>), (<$>), void, (==), const)
 
 type State = 
   { searchLevel :: String
@@ -23,6 +23,7 @@ type State =
 
 data Action
   = Initialize
+  | Refresh
   | LoadPlayers ScoreParams
 
 component 
@@ -59,24 +60,40 @@ component =
             , searchLevel = fromMaybe "easy" level
             }
 
+        Refresh -> do
+          { searchLevel } <- H.get
+          players <- getPlayers { username: Nothing, level: Just searchLevel }
+          H.modify_ _ 
+            { players = RemoteData.fromMaybe players
+            }
+
 panel 
   :: forall props
   . State
   -> HH.HTML props Action
 panel { searchLevel, players } = 
   HH.nav [ css "panel" ] $
-    [ HH.p [ css "panel-heading" ] [ HH.text "Best results"]
+    [ HH.p [ css "panel-heading is-clearfix" ] 
+      [ HH.text "Best results"
+      , HH.button [ css "button is-rounded is-pulled-right"] 
+          [ HH.span 
+            [ css "icon" 
+            , HE.onClick (const $ Just Refresh)
+            ] 
+            [ HH.i [ css "fas fa-sync-alt" ] []]
+          ]
+      ]
     , HH.p [ css "panel-tabs" ] 
         [ HH.a [ css $ if searchLevel == "easy" then "is-active" else "" 
-               , HE.onClick (\_ -> Just $ LoadPlayers { username: Nothing, level: Just "easy" })
+               , HE.onClick (const $ Just $ LoadPlayers { username: Nothing, level: Just "easy" })
                ]
           [ HH.text "Easy level"]
         , HH.a [ css $ if searchLevel == "medium" then "is-active" else "" 
-               , HE.onClick (\_ -> Just $ LoadPlayers { username: Nothing, level: Just "medium" })
+               , HE.onClick (const $ Just $ LoadPlayers { username: Nothing, level: Just "medium" })
                ]
           [ HH.text "Medium level" ]
         , HH.a [ css $ if searchLevel == "hard" then "is-active" else ""
-               , HE.onClick (\_ -> Just $ LoadPlayers { username: Nothing, level: Just "hard" })
+               , HE.onClick (const $ Just $ LoadPlayers { username: Nothing, level: Just "hard" })
                ]
           [ HH.text "Hard level" ]
         ]

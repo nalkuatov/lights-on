@@ -13,21 +13,32 @@ module Lightson.Data.Game
 
   where
 
+import Prelude
+
 import Data.Array ((..))
 import Data.List (all)
 import Data.Map (Map, fromFoldable, update, lookup, values)
 import Data.Maybe (Maybe(..), maybe)
 import Data.Tuple (Tuple(..))
-import Prelude
 
 type Size = Int
-type Level = Int
+newtype Level = Level Int
 
 newtype Game =
   Game { size :: Size
        , level :: Level
        , map :: Map (Tuple Int Int) Boolean
        }
+
+instance levelShow :: Show Level where
+  show (Level 1) = "Easy"
+  show (Level 2) = "Medium"
+  show (Level 3) = "Hard"
+  show _ = "undefined level"
+
+derive newtype instance eqLevel :: Eq Level
+derive newtype instance numLevel :: Ord Level
+derive newtype instance semiringLevel :: Semiring Level
 
 _level :: Game -> Level
 _level (Game { level }) = level
@@ -40,11 +51,11 @@ _map (Game { map }) = map
 
 nextLevel :: Game -> Maybe Game
 nextLevel (Game { size, level })
-  | level >= 3 = Nothing
-  | otherwise  = Just $ generate (size + 1) (level + 1)
+  | level >= Level 3 = Nothing
+  | otherwise  = Just $ generate (size + 1) (level + Level 1)
 
 levelOne :: Game 
-levelOne = generate 3 1
+levelOne = generate 3 $ Level 1
 
 isOn :: Tuple Int Int -> Game -> Boolean
 isOn key =
