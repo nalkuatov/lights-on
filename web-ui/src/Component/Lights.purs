@@ -104,7 +104,7 @@ lights gameMaybe =
                   [ HH.input 
                       [ css "input is-info"
                       , placeholder "type your name"
-                      , HE.onValueInput $ Just <<< Input
+                      , HE.onValueInput (Just <<< Input)
                       ]
                   ]
               , HH.p [ css "control"] 
@@ -131,7 +131,7 @@ lights gameMaybe =
         trs rowNumber = 
           HH.tr_ $ (\colNumber -> 
                      HH.td [ css $ cellIsOn rowNumber colNumber 
-                           , HE.onClick $ (\_ -> Just (Switch $ Tuple rowNumber colNumber))
+                           , HE.onClick (const $ Just (Switch $ Tuple rowNumber colNumber))
                            ] 
                       []) 
                  <$> (1 .. _size game)
