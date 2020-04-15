@@ -24,7 +24,7 @@ routes :: ScottyT Text S.Session ()
 routes = do
 
   middleware logStdoutDev
-  middleware $ cors $ 
+  middleware $ cors $
     const $ Just simpleCorsResourcePolicy { corsRequestHeaders = ["Content-Type"]}
 
   let wrapped (id, username, score, game_level) =
@@ -45,7 +45,7 @@ routes = do
     jsonBody <- body
     let score = decode jsonBody :: Maybe Score
     case score of
-      Nothing -> do 
+      Nothing -> do
         status status415
         json ("couldn't decode json to Score" :: String)
       Just value -> do
@@ -54,7 +54,7 @@ routes = do
 
   get "/scores" $ do
     level <- param "level" `rescue` (\_ -> return empty)
-    result <- 
+    result <-
       if level == empty
         then lift $ S.byLevel 1
         else lift $ S.byLevel $ (lvlToInt . toLower) level
@@ -63,6 +63,6 @@ routes = do
   get "/scores/:id" $ do
     scoreId <- param "id"
     result <- lift $ S.byId scoreId
-    when (isNothing result) $ 
+    when (isNothing result) $
       status status404
     json $ wrapped <$> result
